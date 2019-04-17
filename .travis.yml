@@ -1,0 +1,23 @@
+language: go
+dist: trusty
+
+git:
+  depth: 11
+
+go: 1.x
+
+addons:
+  sonarcloud:
+    organization: tynn-github
+
+script:
+  - go test -coverprofile=coverage.out
+  - "
+    sonar-scanner
+      -Dsonar.sources=.
+      -Dsonar.exclusions='**/*_test.go'
+      -Dsonar.tests=.
+      -Dsonar.test.inclusions='**/*_test.go'
+      -Dsonar.go.coverage.reportPaths=coverage.out
+      -Dsonar.projectKey=sonar-badge-proxy
+    "
