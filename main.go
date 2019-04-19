@@ -8,10 +8,11 @@ import (
 func logFatalPanic() { log.Fatal(recover()) }
 
 func newServer() *http.Server {
+	c := LoadConfig()
 	m := http.NewServeMux()
 	m.HandleFunc("/favicon.ico", http.NotFound)
 	m.HandleFunc("/", http.NotFound)
-	return &http.Server{Addr: ":4000", Handler: m}
+	return &http.Server{Addr: c.Addr, Handler: m}
 }
 
 func main() {

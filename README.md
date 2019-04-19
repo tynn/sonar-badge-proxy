@@ -1,8 +1,8 @@
 Sonar Badge Proxy
 =================
 [![Build Status][Build]][Travis]
-[![Coverage Status][Coverage]][Sonar]
 [![Lines of Code][Lines]][Sonar]
+[![Coverage Status][Coverage]][Sonar]
 
 The release of _SonarQube_ 7.1 included an [API for _Project Badges_][API] for public repositories.
 [Allow usage of project badges on private projects][MMF-1178] is not yet specified or possible.
@@ -70,15 +70,15 @@ The `token` should be provided as a query parameter.
 Example
 -------
 
-Assume a _SonarQube_ _project_ on `sonar.localhost`.
+Assume a _SonarQube_ _project_ on `sonarcloud.io`.
 To access badges for the _bugs_ and _lines_ metrics for master publicly,
 start the proxy as follows:
 
     #!/usr/bin/env bash
     export PORT=4000
+    export REMOTE=sonarcloud.io
+    export SECRET=012345789abcdef
     export METRIC=bugs,lines
-    export REMOTE=sonar.localhost
-    export SECRET=abc123
     ./sonar-badge-proxy
 
 The badges can be accessed through an URL like:
