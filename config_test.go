@@ -37,7 +37,11 @@ func TestAuthorization_unset(t *testing.T) {
 
 func TestMetric(t *testing.T) {
 	os.Setenv("METRIC", "bugs,lines")
-	AssertDeepEqual(t, []string{"bugs", "lines"}, metric(), "Wrong METRIC=%v")
+	e := map[string]string{
+		"bugs":  metricMapping["bugs"],
+		"lines": metricMapping["lines"],
+	}
+	AssertDeepEqual(t, e, metric(), "Wrong METRIC=%v")
 }
 
 func TestMetric_empty(t *testing.T) {
@@ -58,14 +62,21 @@ func TestMetric_unkown(t *testing.T) {
 	metric()
 }
 
-func TestRemote_400(t *testing.T) {
+func TestRemote_domain(t *testing.T) {
+	os.Setenv("REMOTE", "\n")
+	defer AssertPanic(t, "Domain")
+	remote(new(http.Client))
+}
+
+func TestRemote_request(t *testing.T) {
 	s := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Bad Request", http.StatusBadRequest)
 	}))
 	defer s.Close()
-	os.Setenv("REMOTE", s.URL)
+
 	u, err := url.Parse(s.URL + "/api/project_badges/measure")
 	AssertNoError(t, err)
+
 	c := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -73,17 +84,20 @@ func TestRemote_400(t *testing.T) {
 			},
 		},
 	}
+
+	os.Setenv("REMOTE", u.Host)
 	AssertDeepEqual(t, u, remote(c), "Wrong REMOTE=%v")
 }
 
-func TestRemote_401(t *testing.T) {
+func TestRemote_unauthorized(t *testing.T) {
 	s := httptest.NewTLSServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "Unauthorized", http.StatusUnauthorized)
 	}))
 	defer s.Close()
-	os.Setenv("REMOTE", s.URL)
+
 	u, err := url.Parse(s.URL + "/api/project_badges/measure")
 	AssertNoError(t, err)
+
 	c := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -91,6 +105,8 @@ func TestRemote_401(t *testing.T) {
 			},
 		},
 	}
+
+	os.Setenv("REMOTE", u.Host)
 	AssertDeepEqual(t, u, remote(c), "Wrong REMOTE=%v")
 }
 
@@ -99,7 +115,10 @@ func TestRemote_none(t *testing.T) {
 		http.Error(w, "OK", http.StatusOK)
 	}))
 	defer s.Close()
-	os.Setenv("REMOTE", s.URL)
+
+	u, err := url.Parse(s.URL + "/api/project_badges/measure")
+	AssertNoError(t, err)
+
 	c := &http.Client{
 		Transport: &http.Transport{
 			TLSClientConfig: &tls.Config{
@@ -107,6 +126,8 @@ func TestRemote_none(t *testing.T) {
 			},
 		},
 	}
+
+	os.Setenv("REMOTE", u.Host)
 	defer AssertPanic(t, "REMOTE")
 	remote(c)
 }

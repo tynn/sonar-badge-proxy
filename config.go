@@ -1,12 +1,12 @@
 package main
 
 import (
-	"log"
 	"net/http"
 	"net/url"
 	"os"
 	"strconv"
 	"strings"
+	"time"
 )
 
 var metricMapping = map[string]string{
@@ -25,9 +25,9 @@ var metricMapping = map[string]string{
 
 // Config represents the environment configuration of the server
 type Config struct {
-	Addr          string
+	Port          string
 	Authorization string
-	Metric        []string
+	Metric        map[string]string
 	Remote        *url.URL
 	Secret        string
 }
@@ -45,31 +45,31 @@ func authorization() string {
 	return os.Getenv("AUTHORIZATION")
 }
 
-func metric() []string {
+func metric() map[string]string {
 	s := os.Getenv("METRIC")
-	m := strings.Split(s, ",")
-	for _, k := range m {
-		if _, ok := metricMapping[k]; !ok {
+	m := make(map[string]string)
+	for _, k := range strings.Split(s, ",") {
+		v, ok := metricMapping[k]
+		if !ok {
 			panic("Invalid METRIC=" + s)
 		}
+		m[k] = v
 	}
 	return m
 }
 
 func remote(c *http.Client) *url.URL {
 	s := os.Getenv("REMOTE")
-	u, err := url.Parse(s + "/api/project_badges/measure")
+	u, err := url.Parse("https://" + s + "/api/project_badges/measure")
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}
-	u.Scheme = "https"
 	r, err := c.Head(u.String())
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}
 	switch r.StatusCode {
 	case http.StatusUnauthorized:
-		log.Print("AUTHORIZATION required for REMOTE=" + s)
 		fallthrough
 	case http.StatusBadRequest:
 		return u
@@ -84,11 +84,12 @@ func secret() string {
 
 // LoadConfig prepares the Config from the environment
 func LoadConfig() *Config {
+	c := &http.Client{Timeout: 10 * time.Second}
 	return &Config{
-		Addr:          ":" + port(),
+		Port:          port(),
 		Authorization: authorization(),
 		Metric:        metric(),
-		Remote:        remote(http.DefaultClient),
+		Remote:        remote(c),
 		Secret:        secret(),
 	}
 }
