@@ -2,6 +2,7 @@ package main
 
 import (
 	"crypto/md5"
+	"encoding/base64"
 	"encoding/hex"
 	"net/http"
 	"net/http/httputil"
@@ -105,7 +106,7 @@ func errorHandler(w http.ResponseWriter, r *http.Request, e error) {
 	panic(http.StatusBadGateway)
 }
 
-func handlePanic(w http.ResponseWriter, r *http.Request) {
+func handlePanic(w http.ResponseWriter) {
 	switch err := recover(); err {
 	case nil:
 	case http.StatusBadGateway:
@@ -122,7 +123,7 @@ func serveFavicon(w http.ResponseWriter, r *http.Request) {
 }
 
 func (x *Proxy) serveHTTP(w http.ResponseWriter, r *http.Request) {
-	defer handlePanic(w, r)
+	defer handlePanic(w)
 	x.ServeHTTP(w, r)
 }
 
@@ -135,6 +136,12 @@ func (x *Proxy) Server() *http.Server {
 	return &http.Server{Addr: x.addr, Handler: m}
 }
 
+func basicAuthorization(t string) string {
+	a := []byte(t + ":")
+	b := base64.StdEncoding.EncodeToString(a)
+	return "Basic " + b
+}
+
 // NewProxy creates a new proxy from config
 func NewProxy(c *Config) *Proxy {
 	p := new(Proxy)
@@ -143,7 +150,7 @@ func NewProxy(c *Config) *Proxy {
 	p.ErrorHandler = errorHandler
 	p.addr = ":" + c.Port
 	p.remote = c.Remote
-	p.authorization = c.Authorization
+	p.authorization = basicAuthorization(c.Authorization)
 	p.metric = c.Metric
 	p.secret = c.Secret
 	return p

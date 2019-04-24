@@ -68,7 +68,7 @@ func TestAuthorize(t *testing.T) {
 	p.authorize(&h)
 	AssertEqual(t, "", h.Get("Authorization"), "Wrong Authorization=%v")
 
-	p.authorization = "Basic 0123456789"
+	p.authorization = "Basic YXV0aG9yaXphdGlvbjo="
 	p.authorize(&h)
 	AssertEqual(t, p.authorization, h.Get("Authorization"), "Wrong Authorization=%v")
 }
@@ -357,10 +357,17 @@ func TestServer_servererror(t *testing.T) {
 	AssertEqual(t, http.StatusBadGateway, w.Code, "Wrong Code=%v")
 }
 
+func TestBasicAuthorization(t *testing.T) {
+	a := "0123456789abcdef"
+	b := "Basic MDEyMzQ1Njc4OWFiY2RlZjo="
+	AssertEqual(t, b, basicAuthorization(a), "Wrong Authorization=%v")
+}
+
 func TestNewProxy(t *testing.T) {
 	p := "4000"
 	r := new(url.URL)
 	a := "authorization"
+	b := "Basic YXV0aG9yaXphdGlvbjo="
 	s := "secret"
 	m := map[string]string{
 		"metric": "metric",
@@ -377,7 +384,7 @@ func TestNewProxy(t *testing.T) {
 	x := NewProxy(c)
 	AssertEqual(t, ":"+p, x.addr, "Wrong Director=%v")
 	AssertEqual(t, r, x.remote, "Wrong Remote=%v")
-	AssertEqual(t, a, x.authorization, "Wrong Authorization=%v")
+	AssertEqual(t, b, x.authorization, "Wrong Authorization=%v")
 	AssertEqual(t, s, x.secret, "Wrong Secret=%v")
 	AssertDeepEqual(t, m, x.metric, "Wrong Metric=%v")
 	AssertPointerEqual(t, x.director, x.Director, "Wrong Director=%v")
