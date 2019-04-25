@@ -16,11 +16,7 @@ Usage
 
 URL to access a specific BADGE for a PROJECT:
 
-    sbp.localhost/$BADGE/$PROJECT
-
-URL to access a BADGE for specific BRANCH of a PROJECT:
-
-    sbp.localhost/$BADGE/$PROJECT?branch=$BRANCH
+    localhost:4000/$BADGE/$PROJECT
 
 
 ### Metric mapping
@@ -46,7 +42,7 @@ The BADGE path segment does not always match the metric name used with the [API]
 The port the reverse proxy server starts on
 
 #### AUTHORIZATION
-The value passed as Authorization header
+The user token passed as Basic Authorization header
 
 #### METRIC
 A comma separated list of metrics to expose as BADGE
@@ -58,13 +54,19 @@ The host of the _SonarQube_ installation
 A secret to create a project access token with
 
 
+### Branch badges
+
+To access metric badges for specific branches,
+a `branch` query parameter can be added to the request.
+
+
 ### Project Access Token
 
 Access to the badges provided by _Sonar Badge Proxy_ can be restricted.
-
-     assert token == md5("$PROJECT:$SECRET")
-
 The `token` should be provided as a query parameter.
+
+    assert token == md5("$PROJECT:$SECRET")
+
 
 
 Example
@@ -107,7 +109,7 @@ License
 
 [API]: https://next.sonarqube.com/sonarqube/web_api/api/project_badges/measure
 [MMF-1178]: https://jira.sonarsource.com/browse/MMF-1178
-[Build]: https://www.travis-ci.org/tynn/sonar-badge-proxy.svg
+[Build]: https://img.shields.io/travis/tynn/sonar-badge-proxy.svg?logo=travis
 [Travis]: https://www.travis-ci.org/tynn/sonar-badge-proxy
 [Coverage]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=coverage
 [Lines]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=ncloc

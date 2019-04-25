@@ -137,6 +137,9 @@ func (x *Proxy) Server() *http.Server {
 }
 
 func basicAuthorization(t string) string {
+	if t == "" {
+		return ""
+	}
 	a := []byte(t + ":")
 	b := base64.StdEncoding.EncodeToString(a)
 	return "Basic " + b

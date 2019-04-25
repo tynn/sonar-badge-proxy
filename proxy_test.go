@@ -361,6 +361,7 @@ func TestBasicAuthorization(t *testing.T) {
 	a := "0123456789abcdef"
 	b := "Basic MDEyMzQ1Njc4OWFiY2RlZjo="
 	AssertEqual(t, b, basicAuthorization(a), "Wrong Authorization=%v")
+	AssertEqual(t, "", basicAuthorization(""), "Wrong Authorization=%v")
 }
 
 func TestNewProxy(t *testing.T) {
