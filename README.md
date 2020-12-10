@@ -53,6 +53,9 @@ The host of the _SonarQube_ installation
 #### SECRET
 A secret to create a project access token with
 
+#### JSON
+If "true", then return metrics in JSON format instead of image. Usefull is used with shields.io
+
 
 ### Branch badges
 
