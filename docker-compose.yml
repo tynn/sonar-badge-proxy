@@ -15,6 +15,5 @@ services:
       - PORT=${PORT}
       - REMOTE=${REMOTE}
       - AUTHORIZATION=${AUTHORIZATION}
-      - JSON=${JSON}
       - INSECURE_SKIP_VERIFY=${INSECURE_SKIP_VERIFY}
       - SECRET=${SECRET}

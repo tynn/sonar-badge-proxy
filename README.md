@@ -53,9 +53,6 @@ The host of the _SonarQube_ installation
 #### SECRET
 A secret to create a project access token with
 
-#### JSON
-If "true", then return metrics in JSON format instead of image. Usefull is used with shields.io
-
 #### INSECURE_SKIP_VERIFY
 If "true", then skip verification of the SSL certificate of the sonarqube server
 
@@ -86,11 +83,29 @@ start the proxy as follows:
     export REMOTE=sonarcloud.io
     export SECRET=012345789abcdef
     export METRIC=bugs,lines
+    # uncomment out if you want to skip the SSL certificate check
+    #export INSECURE_SKIP_VERIFY=true
     ./sonar-badge-proxy
 
 The badges can be accessed through an URL like:
 
     localhost:4000/coverage/project?branch=master&token=7d9ccf5d9de733c1f7aded0048739e89
+
+
+Docker
+------
+
+You can build a docker image with following command line:
+
+    docker build . 
+
+
+You can also use docker-compose to build and run _Sonar Badge Proxy_ as follows:
+
+    docker-compose --env-file docker.env up -d
+
+
+You must first edit docker.env file to configure environment variable. An example of docker.env.template is available in source. Just use it and rename it to docker.env.
 
 
 License
