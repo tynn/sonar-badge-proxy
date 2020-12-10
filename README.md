@@ -56,6 +56,8 @@ A secret to create a project access token with
 #### JSON
 If "true", then return metrics in JSON format instead of image. Usefull is used with shields.io
 
+#### INSECURE_SKIP_VERIFY
+If "true", then skip verification of the SSL certificate of the sonarqube server
 
 ### Branch badges
 
