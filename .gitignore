@@ -6,5 +6,5 @@
 *.test
 *.out
 
-.env
+docker.env
 sonar-badge-proxy

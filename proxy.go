@@ -19,7 +19,6 @@ type Proxy struct {
 	authorization string
 	metric        map[string]string
 	secret        string
-	json 		  bool
 }
 
 func (x *Proxy) requested(u *url.URL) (string, string) {
@@ -37,15 +36,10 @@ func (x *Proxy) requested(u *url.URL) (string, string) {
 	return m, p[2]
 }
 
-func (x *Proxy) buildQuery(m string, p string, b string) url.Values {
+func buildQuery(m string, p string, b string) url.Values {
 	q := make(url.Values)
-	if x.json {
-		q.Set("metricKeys", m)
-		q.Set("component", p)
-	} else {
-		q.Set("metric", m)
-		q.Set("project", p)
-	}
+	q.Set("metric", m)
+	q.Set("project", p)
 	if b != "" {
 		q.Set("branch", b)
 	}
@@ -87,7 +81,7 @@ func (x *Proxy) director(r *http.Request) {
 	m, p := x.requested(r.URL)
 	q := r.URL.Query()
 	x.verifyToken(p, q["token"]...)
-	q = x.buildQuery(m, p, q.Get("branch"))
+	q = buildQuery(m, p, q.Get("branch"))
 	x.authorize(&r.Header)
 	x.rewriteURL(r, q)
 }
@@ -162,6 +156,5 @@ func NewProxy(c *Config) *Proxy {
 	p.authorization = basicAuthorization(c.Authorization)
 	p.metric = c.Metric
 	p.secret = c.Secret
-	p.json = c.Json
 	return p
 }

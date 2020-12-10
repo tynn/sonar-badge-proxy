@@ -31,7 +31,6 @@ type Config struct {
 	Metric        map[string]string
 	Remote        *url.URL
 	Secret        string
-	Json		  bool
 	InsecureSkipVerify bool
 }
 
@@ -42,10 +41,6 @@ func port() string {
 		panic("Invalid PORT=" + s)
 	}
 	return s
-}
-
-func json() bool {
-	return strings.Compare(os.Getenv("JSON"),"true") == 0
 }
 
 func authorization() string {
@@ -67,12 +62,7 @@ func metric() map[string]string {
 
 func remote(c *http.Client) *url.URL {
 	s := os.Getenv("REMOTE")
-	uri := "https://" + s + "/api/project_badges/measure"
-	if json() {
-		uri = "https://" + s + "/api/measures/component"
-	}
-	
-	u, err := url.Parse(uri)
+	u, err := url.Parse("https://" + s + "/api/project_badges/measure")
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}
@@ -80,7 +70,6 @@ func remote(c *http.Client) *url.URL {
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}
-	return u
 	switch r.StatusCode {
 	case http.StatusUnauthorized:
 		fallthrough
@@ -110,6 +99,5 @@ func LoadConfig() *Config {
 		Metric:        metric(),
 		Remote:        remote(c),
 		Secret:        secret(),
-		Json:          json(),
 	}
 }
