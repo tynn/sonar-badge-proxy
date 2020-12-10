@@ -1,0 +1,19 @@
+version: '3'
+
+
+services:
+  proxy:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    container_name: sonar-badge-proxy
+    ports: 
+      - ${PORT}:${PORT}
+
+    environment:
+      - METRIC=${METRIC}
+      - PORT=${PORT}
+      - REMOTE=${REMOTE}
+      - AUTHORIZATION=${AUTHORIZATION}
+      - INSECURE_SKIP_VERIFY=${INSECURE_SKIP_VERIFY}
+      - SECRET=${SECRET}

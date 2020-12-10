@@ -5,3 +5,6 @@
 *.dylib
 *.test
 *.out
+
+docker.env
+sonar-badge-proxy

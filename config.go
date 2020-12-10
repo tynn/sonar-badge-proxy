@@ -7,6 +7,7 @@ import (
 	"strconv"
 	"strings"
 	"time"
+	"crypto/tls"
 )
 
 var metricMapping = map[string]string{
@@ -30,6 +31,7 @@ type Config struct {
 	Metric        map[string]string
 	Remote        *url.URL
 	Secret        string
+	InsecureSkipVerify bool
 }
 
 func port() string {
@@ -45,7 +47,7 @@ func authorization() string {
 	return os.Getenv("AUTHORIZATION")
 }
 
-func metric() map[string]string {
+func metric() map[string]string { 
 	s := os.Getenv("METRIC")
 	m := make(map[string]string)
 	for _, k := range strings.Split(s, ",") {
@@ -82,9 +84,15 @@ func secret() string {
 	return os.Getenv("SECRET")
 }
 
+func insecureSkipVerify() bool {
+	return strings.Compare(os.Getenv("INSECURE_SKIP_VERIFY"),"true") == 0
+}
+
 // LoadConfig prepares the Config from the environment
 func LoadConfig() *Config {
-	c := &http.Client{Timeout: 10 * time.Second}
+	customTransport := &(*http.DefaultTransport.(*http.Transport)) // make shallow copy
+	customTransport.TLSClientConfig = &tls.Config{InsecureSkipVerify: insecureSkipVerify() }
+	c := &http.Client{Timeout: 10 * time.Second, Transport: customTransport}
 	return &Config{
 		Port:          port(),
 		Authorization: authorization(),
