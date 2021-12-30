@@ -1,6 +1,6 @@
 Sonar Badge Proxy
 =================
-[![Build Status][Build]][Travis]
+[![Build Status][Build]][Actions]
 [![Lines of Code][Lines]][Sonar]
 [![Coverage Status][Coverage]][Sonar]
 
@@ -109,8 +109,8 @@ License
 
 [API]: https://next.sonarqube.com/sonarqube/web_api/api/project_badges/measure
 [MMF-1178]: https://jira.sonarsource.com/browse/MMF-1178
-[Build]: https://img.shields.io/travis/tynn/sonar-badge-proxy.svg?logo=travis
-[Travis]: https://www.travis-ci.org/tynn/sonar-badge-proxy
+[Build]: https://img.shields.io/github/workflow/status/tynn/sonar-badge-proxy/Build?logo=github
+[Actions]: https://github.com/tynn/sonar-badge-proxy/actions
 [Coverage]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=coverage
 [Lines]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=ncloc
 [Sonar]: https://sonarcloud.io/dashboard?id=sonar-badge-proxy

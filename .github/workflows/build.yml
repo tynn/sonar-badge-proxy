@@ -1,0 +1,57 @@
+name: Build
+
+on:
+
+  push:
+    branches:
+      - main
+      - dev
+
+jobs:
+
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        go:
+          - 1.14
+          - 1.15
+          - 1.16
+          - 1.17
+
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+        with:
+          go-version: ${{ matrix.go }}
+      - run: go test -coverprofile=coverage.out
+      - uses: actions/upload-artifact@v2
+        with:
+          name: coverage
+          path: coverage.out
+
+  sonar:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: none
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
+      - uses: actions/download-artifact@v2
+        with:
+          name: coverage
+      - uses: sonarsource/sonarcloud-github-action@v1.6
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+        with:
+          args: >
+            -Dsonar.organization=tynn-github
+            -Dsonar.projectKey=sonar-badge-proxy
+            -Dsonar.sources=.
+            -Dsonar.tests=.
+            -Dsonar.go.coverage.reportPaths=coverage.out
+
