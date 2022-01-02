@@ -68,6 +68,23 @@ The `token` should be provided as a query parameter.
     assert token == md5("$PROJECT:$SECRET")
 
 
+Docker
+------
+
+A `Dockerfile` is provided to build and run a server image
+`FROM scratch` like:
+
+    docker build -t sonar-badge-proxy .
+    docker run --env-file=.env sonar-badge-proxy
+
+The resulting image only contains _/etc/ssl/certs/ca-certificates.crt_
+and the statically linked `sonar-badge-proxy` binary itself.
+
+If the `REMOTE` SonarQube instance is using a self signed SSL certificate,
+just mount the custom CA certificate to replace the *ca_certificates* like:
+
+    docker run -v /path/to/custom.crt:/etc/ssl/certs/ca-certificates.crt sonar-badge-proxy
+
 
 Example
 -------
@@ -87,10 +104,19 @@ The badges can be accessed through an URL like:
 
     localhost:4000/coverage/project?branch=master&token=7d9ccf5d9de733c1f7aded0048739e89
 
+The provided _.env_ file declares a default envirement for all metrics of
+public projects on sonarcloud.io, without setting a `SECRET`, to be used
+as follows:
+
+    #!/usr/bin/env bash
+    set -a
+    . .env
+    ./sonar-badge-proxy
+
 
 License
 -------
-    
+
     Copyright (C) 2019  tynn
 
     This program is free software: you can redistribute it and/or modify

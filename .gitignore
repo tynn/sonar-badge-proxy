@@ -1,3 +1,5 @@
+sonar-badge-proxy
+.env.local
 *.exe
 *.exe~
 *.dll

@@ -1,0 +1,5 @@
+*
+!*.go
+*_test.go
+!go.mod
+!favicon.ico

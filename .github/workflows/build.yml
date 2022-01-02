@@ -30,6 +30,14 @@ jobs:
           name: coverage
           path: coverage.out
 
+  docker:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - uses: actions/checkout@v2
+      - run: docker build .
+
   sonar:
     runs-on: ubuntu-latest
     permissions:
