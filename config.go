@@ -64,7 +64,7 @@ func remote(c *http.Client) *url.URL {
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}
-	r, err := c.Head(u.String())
+	r, err := c.Get(u.String())
 	if err != nil {
 		panic("Invalid REMOTE=" + s)
 	}

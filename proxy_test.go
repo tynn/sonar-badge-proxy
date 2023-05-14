@@ -162,7 +162,10 @@ func TestServer_root(t *testing.T) {
 	r, err := http.NewRequest("GET", "/", nil)
 	AssertNoError(t, err)
 
-	h := new(Proxy).Server().Handler
+	p := new(Proxy)
+	p.Director = p.director
+
+	h := p.Server().Handler
 	w := httptest.NewRecorder()
 
 	h.ServeHTTP(w, r)

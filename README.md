@@ -1,8 +1,6 @@
 Sonar Badge Proxy
 =================
 [![Build Status][Build]][Actions]
-[![Lines of Code][Lines]][Sonar]
-[![Coverage Status][Coverage]][Sonar]
 
 The release of _SonarQube_ 7.1 included an [API for _Project Badges_][API] for public repositories.
 [Allow usage of project badges on private projects][MMF-1178] is not yet specified or possible.
@@ -135,8 +133,5 @@ License
 
 [API]: https://next.sonarqube.com/sonarqube/web_api/api/project_badges/measure
 [MMF-1178]: https://jira.sonarsource.com/browse/MMF-1178
-[Build]: https://img.shields.io/github/workflow/status/tynn/sonar-badge-proxy/Build?logo=github
+[Build]: https://img.shields.io/github/actions/workflow/status/tynn/sonar-badge-proxy/build.yml?logo=github
 [Actions]: https://github.com/tynn/sonar-badge-proxy/actions
-[Coverage]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=coverage
-[Lines]: https://sonarcloud.io/api/project_badges/measure?project=sonar-badge-proxy&metric=ncloc
-[Sonar]: https://sonarcloud.io/dashboard?id=sonar-badge-proxy

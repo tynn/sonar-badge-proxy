@@ -1,0 +1,47 @@
+name: Publish V0
+on:
+  push:
+    branches:
+      - main
+
+env:
+  REGISTRY: ghcr.io
+  VERSION:
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+    steps:
+      - name: Set up version
+        run: echo VERSION=0.$GITHUB_RUN_NUMBER.$(($GITHUB_RUN_ATTEMPT-1)) >> $GITHUB_ENV
+      - uses: actions/checkout@v3
+      - uses: docker/metadata-action@v4
+        id: meta
+        with:
+          images: ${{ env.REGISTRY }}/${{ github.repository }}
+          flavor: latest=false
+          tags: |
+            type=semver,pattern={{version}},value=${{ env.VERSION }},priority=1000
+            type=semver,pattern={{major}}.{{minor}},value=${{ env.VERSION }}
+            type=sha,format=long,prefix=,priority=200
+            type=sha,prefix=
+      - uses: docker/setup-buildx-action@v2
+      - uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - uses: docker/build-push-action@v4
+        with:
+          context: .
+          push: true
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          platforms: |
+            linux/amd64
+            linux/arm64
+            linux/arm/v6
